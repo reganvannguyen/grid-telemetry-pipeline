@@ -1,0 +1,16 @@
+# Data Wrangling & Linear Algebra
+pandas
+numpy
+
+# Database Connectivity (SQLite / Postgres)
+sqlalchemy
+
+# Network / Ingestion
+requests
+
+# Exploratory Charts & Heatmaps
+matplotlib
+seaborn
+
+
+import zipfile
