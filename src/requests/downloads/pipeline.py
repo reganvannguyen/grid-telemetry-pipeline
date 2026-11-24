@@ -10,6 +10,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.ingest.extract_aeso import extract_aeso
+from src.ingest.extract_weather import download_weather, extract_weather
 
 DB_PATH = PROJECT_ROOT / "data/grid_telemetry.db"
 
@@ -58,4 +59,13 @@ if __name__ == "__main__":
         extract_fn=extract_aeso,
         table_name="raw_aeso_load",
         sort_col="dt_mst",
+    )
+
+    weather_dir = PROJECT_ROOT / "data/raw/weather"
+    download_weather(weather_dir)
+    run_ingest(
+        folder=weather_dir,
+        extract_fn=extract_weather,
+        table_name="raw_weather",
+        sort_col="dt_lst",
     )
