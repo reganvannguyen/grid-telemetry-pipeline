@@ -65,7 +65,21 @@ def run_transform(sql_path: Path, db_path: Path = DB_PATH) -> None:
     print(f"Created clean_grid_telemetry with {row_count} rows in {db_path}")
 
 
-#run the pipeline for aeso, weather, and transform
+def run_anomalies(sql_path: Path, db_path: Path = DB_PATH) -> None:
+    """Run anomaly detection SQL script to build telemetry_with_baselines and grid_anomalies."""
+    #read the anomalies sql file
+    sql = sql_path.read_text()
+
+    #execute the sql against sqlite and check row counts
+    with sqlite3.connect(db_path) as conn:
+        conn.executescript(sql)
+        total_rows = conn.execute("SELECT COUNT(*) FROM telemetry_with_baselines").fetchone()[0]
+        anomaly_rows = conn.execute("SELECT COUNT(*) FROM grid_anomalies").fetchone()[0]
+
+    print(f"Created telemetry_with_baselines ({total_rows} rows) and grid_anomalies ({anomaly_rows} rows) in {db_path}")
+
+
+#run the pipeline for aeso, weather, transform, and anomalies
 if __name__ == "__main__":
     run_ingest(
         folder=PROJECT_ROOT / "data/raw/aeso",
@@ -84,3 +98,4 @@ if __name__ == "__main__":
     )
 
     run_transform(PROJECT_ROOT / "src/transform.sql")
+    run_anomalies(PROJECT_ROOT / "src/anomalies.sql")

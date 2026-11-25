@@ -7,6 +7,8 @@ def extract_aeso(path: str | Path) -> pd.DataFrame:
 
     #remove/get the columns needed
     df = df.drop(columns=["DT_MPT","Month","BTFGen","CSDGen"])
+
+    #rename to lower case snake
     df.columns = df.columns.str.strip().str.lower().str.replace(r'\s+', '_', regex=True)
 
     #normalize the timestamp
