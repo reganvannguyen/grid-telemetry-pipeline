@@ -60,6 +60,6 @@ def extract_weather(path: str | Path) -> pd.DataFrame:
     df['dt_lst'] = pd.to_datetime(df['dt_lst'])
 
     #fill isolated sensor gaps in temp_celsius
-    df['temp_celsius'] = pd.to_numeric(df['temp_celsius'], errors='coerce').ffill()
+    df['temp_celsius'] = pd.to_numeric(df['temp_celsius'], errors='coerce').ffill().bfill()
 
     return df

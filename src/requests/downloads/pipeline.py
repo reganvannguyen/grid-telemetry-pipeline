@@ -52,7 +52,20 @@ def run_ingest(folder: Path, extract_fn, table_name: str, sort_col: str | None =
     print(f"Loaded {len(df)} rows into {db_path} (table: {table_name})")
 
 
-#run the pipeline for aeso (and weather later)
+def run_transform(sql_path: Path, db_path: Path = DB_PATH) -> None:
+    """Run transform SQL script to build the clean_grid_telemetry table."""
+    #read the transform sql file
+    sql = sql_path.read_text()
+
+    #execute the sql against sqlite and check row count
+    with sqlite3.connect(db_path) as conn:
+        conn.executescript(sql)
+        row_count = conn.execute("SELECT COUNT(*) FROM clean_grid_telemetry").fetchone()[0]
+
+    print(f"Created clean_grid_telemetry with {row_count} rows in {db_path}")
+
+
+#run the pipeline for aeso, weather, and transform
 if __name__ == "__main__":
     run_ingest(
         folder=PROJECT_ROOT / "data/raw/aeso",
@@ -69,3 +82,5 @@ if __name__ == "__main__":
         table_name="raw_weather",
         sort_col="dt_lst",
     )
+
+    run_transform(PROJECT_ROOT / "src/transform.sql")
